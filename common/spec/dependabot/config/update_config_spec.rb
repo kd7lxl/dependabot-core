@@ -33,6 +33,17 @@ RSpec.describe Dependabot::Config::UpdateConfig do
         expect(ignored_versions).to eq([">= 14.14.x, < 15"])
       end
     end
+
+    context "with a wildcard dependency name" do
+      let(:ignore_conditions) do
+        [Dependabot::Config::UpdateConfig::IgnoreCondition.new(dependency_name: "@types/*",
+                                                               versions: [">= 14.14.x, < 15"])]
+      end
+
+      it "returns versions" do
+        expect(ignored_versions).to eq([">= 14.14.x, < 15"])
+      end
+    end
   end
 
   describe "#commit_message_options" do

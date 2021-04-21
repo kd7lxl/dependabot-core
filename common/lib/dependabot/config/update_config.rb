@@ -12,11 +12,16 @@ module Dependabot
       end
 
       def ignored_versions_for(dep)
+        name_normaliser = Dependency.name_normaliser_for_package_manager(dep.package_manager)
         @ignore_conditions.
-          select { |ic| ic.dependency_name == dep.name }. # FIXME: wildcard support
+          select { |ic| name_match?(name_normaliser.call(ic.dependency_name), name_normaliser.call(dep.name)) }.
           map(&:versions).
           flatten.
           compact
+      end
+
+      def name_match?(name1, name2)
+        Utils.wildcard_match?(name1, name2)
       end
 
       class IgnoreCondition
